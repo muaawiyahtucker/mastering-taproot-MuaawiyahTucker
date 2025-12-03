@@ -17,6 +17,28 @@ Foundational Bitcoin engineering knowledge should be reproducible, inspectable, 
 
 ---
 
+### Audience
+
+This project is intended for:
+
+- Bitcoin protocol engineers
+- Script / Taproot developers
+- Wallet and key management system designers
+- Researchers studying Script, Merkle commitments, or Taproot privacy
+- Contributors preparing for Bitcoin Core or protocol-level work
+
+Beginners may also use it as a structured, hands-on learning path.
+
+---
+
+### Status
+
+This is an active public draft.
+
+Updates are pushed regularly as chapters and code samples reach reproducible stability.
+
+---
+
 ### Repository Structure
 
 All manuscript chapters are in:  
@@ -24,6 +46,40 @@ All manuscript chapters are in:
 
 The table of contents is maintained at:  
 [`book/manuscript/SUMMARY.md`](./book/manuscript/SUMMARY.md)
+
+---
+
+### How to Use This Repository
+
+1. **Read the Manuscript**
+
+   All chapters:
+   
+   [`book/manuscript/`](./book/manuscript/)
+   
+   Start with `SUMMARY.md` for the full outline.
+
+2. **Run the Code**
+
+   Every chapter's runnable examples live in [`code/`](./code/).
+   
+   All scripts include:
+   
+   - deterministic key generation
+   - raw transaction hex construction
+   - witness stack building
+   - sighash verification
+   - control block validation (Taproot)
+   
+   Scripts target Bitcoin testnet and require only Python 3.
+
+3. **Verify Against the Network**
+
+   Most examples produce:
+   
+   - a real testnet transaction ID
+   - a decodeable raw transaction
+   - validation steps you can run in Core (`decoderawtransaction`, `testmempoolaccept`, etc.)
 
 ---
 
