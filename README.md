@@ -1,5 +1,9 @@
 # Mastering Taproot (Public Draft)
 
+<p align="center">
+  <img src="images/cover.jpg" width="320">
+</p>
+
 ### About the Book
 
 *Mastering Taproot* is a developer-focused, reproducible guide to Bitcoin’s most powerful upgrade — Taproot.
