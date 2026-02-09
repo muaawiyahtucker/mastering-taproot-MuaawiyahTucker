@@ -49,11 +49,9 @@ The framework-first, code-iterative approach: the complete narrative arc from pr
 
 ### Interactive Notebooks
 
-An interactive companion with Jupyter notebooks is available at:
-
-**[mastering-taproot-interactive](https://github.com/aaron-recompile/mastering-taproot-interactive)** — run real Bitcoin Script examples step by step, modify parameters, and experiment with Taproot constructions interactively.
-
-Live site: [bitcoincoding.dev](https://bitcoincoding.dev)
+> **Try it live** — Run real Bitcoin Script examples step by step, modify parameters, and experiment with Taproot constructions interactively:
+>
+> **[bitcoincoding.dev](https://bitcoincoding.dev)** | [Source repo](https://github.com/aaron-recompile/mastering-taproot-interactive)
 
 ---
 
