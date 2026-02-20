@@ -61,7 +61,7 @@ The Wallet Import Format (WIF) addresses the usability challenges of raw hexadec
 The WIF encoding process follows these steps:
 
 1. **Add version prefix**: `0x80` for mainnet, `0xEF` for testnet
-2. **(Optional) Add compression flag**: If the corresponding public key will be compressed, append 0x01 to the payload,This step changes the final Base58 prefix of the WIF
+2. **(Optional) Add compression flag**: If the corresponding public key will be compressed, append `0x01` to the payload. This step changes the final Base58 prefix of the WIF
 2. **Calculate checksum**: Apply SHA256(SHA256(data)) and take first 4 bytes
 3. **Apply Base58 encoding**: Convert to human-readable format
 
