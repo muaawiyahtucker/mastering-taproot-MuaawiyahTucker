@@ -25,7 +25,7 @@ The address just contains the terms by which the network accepts it to be later 
 ## 3. Whitepaper vs P2PKH
 
 *What changed structurally?*
-The whitepaper tied the transfer of value from one contract to another contract directly to the public key. P2PKH changed this by tying it to the hash of the public key, adding an additional layer security.
+The whitepaper tied the transfer of value from one digital signature to another, as stated in the statement " Each owner transfers the coin to the next by digitally signing a hash of the previous transaction and the public key of the next owner and adding these to the end of the coin". P2PKH changed this by tying it to the hash of the public key, and a script that verifies this. So there were now a series of OP_CODES that played a detailed role in how value was transferred.
 ---
 
 ## 4. Balance as Query
