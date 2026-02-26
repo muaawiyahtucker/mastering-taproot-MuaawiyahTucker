@@ -526,7 +526,7 @@ paths = {
 
 ### Control Block Verification Practice: Analyzing Real On-Chain Data
 
-Let's use Aaron Recompile's successfully executed multisig transaction as an example to deeply analyze the complete verification process of the Control Block.
+Let's use a successfully executed multisig transaction as an example to deeply analyze the complete verification process of the Control Block.
 
 **Transaction ID**: [`1951a3be...e604a1`](https://mempool.space/testnet/tx/1951a3be0f05df377b1789223f6da66ed39c781aaf39ace0bf98c3beb7e604a1)
 
