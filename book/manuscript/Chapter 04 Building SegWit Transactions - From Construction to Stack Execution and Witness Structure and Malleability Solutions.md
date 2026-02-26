@@ -242,8 +242,6 @@ ed8fe164434616c94fa48f3549e33c03012102898711e6bf63f5cbe1b38c05e89d6c
 391c59e9f8f695da44bf3d20ca674c851900000000
 ```
 
-**Verified Transaction:** This transaction was successfully broadcast to testnet. TXID: [`271cf628...084e3e6`](https://mempool.space/testnet/tx/271cf6285479885a5ffa4817412bfcf55e7d2cf43ab1ede06c4332b46084e3e6)
-
 **Critical Changes:**
 - ScriptSig remains empty
 - Witness data appears
