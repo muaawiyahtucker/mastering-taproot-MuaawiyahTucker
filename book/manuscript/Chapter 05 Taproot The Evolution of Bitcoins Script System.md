@@ -67,7 +67,7 @@ ECDSA Multisig (3-of-3):
 │ Total Size: ~213 bytes              │
 │ Verifications: 3 separate           │
 │ Privacy: REVEALS 3 participants     │
-│ Appearance: 👤👤👤 (obviously multi)│
+│ Appearance: multi (obviously multi) │
 └─────────────────────────────────────┘
 
 Schnorr Aggregated (3-of-3):
@@ -78,30 +78,30 @@ Schnorr Aggregated (3-of-3):
 ├─────────────────────────────────────┤
 │ Total Size: 64 bytes                │
 │ Verifications: 1 single check       │
-│ Privacy: REVEALS nothing about #    │
-│ Appearance: 👤 (looks like single)  │
+│ Privacy: hides participant count    │
+│ Appearance: single (looks single)   │
 └─────────────────────────────────────┘
 ```
 
 **The Privacy Magic:**
 ```
 External Observer sees:
-┌──────────────────┬───────────────────┐
-│   Transaction A  │   Transaction B   │
-├──────────────────┼───────────────────┤
-│ 64-byte signature│ 64-byte signature │
-│ Looks like: 👤   │ Looks like: 👤    │
-└──────────────────┴───────────────────┘
+┌──────────────────┬──────────────────┐
+│   Transaction A  │   Transaction B  │
+├──────────────────┼──────────────────┤
+│ 64-byte signature│ 64-byte signature│
+│ Looks: single    │ Looks: single    │
+└──────────────────┴──────────────────┘
 
 Reality:
-┌──────────────────┬───────────────────┐
-│   Transaction A  │   Transaction B   │
-├──────────────────┼───────────────────┤
-│ Actually: 👤     │ Actually: 👤👤👤  │
-│ (1 person)       │ (3 people)        │
-└──────────────────┴───────────────────┘
+┌──────────────────┬──────────────────┐
+│   Transaction A  │   Transaction B  │
+├──────────────────┼──────────────────┤
+│ Actual: single   │ Actual: multi    │
+│ (1 person)       │ (3 people)       │
+└──────────────────┴──────────────────┘
 
-🔮 Impossible to distinguish from outside!
+[Note] Impossible to distinguish from outside!
 ```
 
 ## Key Tweaking: The Bridge to Taproot
@@ -184,34 +184,35 @@ import hashlib
 
 def demonstrate_key_tweaking():
     setup('testnet')
-    
+
     # Step 1: Generate internal key pair
     internal_private_key = PrivateKey('cTALNpTpRbbxTCJ2A5Vq88UxT44w1PE2cYqiB3n4hRvzyCev1Wwo')
     internal_public_key = internal_private_key.get_public_key()
-    
+
     print("=== STEP 1: Internal Key Generation ===")
     print(f"Internal Private Key: {internal_private_key.to_wif()}")
     print(f"Internal Public Key:  {internal_public_key.to_hex()}")
-    
+
     # Step 2: Create simple script commitment (we'll use empty for this example)
     # In real Taproot, this would be a Merkle root of script conditions
-    script_commitment = b''  # Empty = key-path-only spending
-    
+    script_commitment = b'' # Empty = key-path-only spending
+
     print(f"\n=== STEP 2: Script Commitment ===")
     print(f"Script Commitment: {script_commitment.hex() if script_commitment else 'Empty (key-path-only)'}")
-    
+
     # Step 3: Calculate tweak using BIP341 formula
-    internal_pubkey_bytes = bytes.fromhex(internal_public_key.to_hex()[2:])  # x-only
-    tweak_preimage = b'TapTweak' + internal_pubkey_bytes + script_commitment
+    internal_pubkey_bytes = bytes.fromhex(internal_public_key.to_x_only_hex()) # x-only
+    tag_digest = hashlib.sha256(b'TapTweak').digest()
+    tweak_preimage = tag_digest + tag_digest + internal_pubkey_bytes + script_commitment
     tweak_hash = hashlib.sha256(tweak_preimage).digest()
     tweak_int = int.from_bytes(tweak_hash, 'big')
-    
+
     print(f"\n=== STEP 3: Tweak Calculation ===")
     print(f"Internal PubKey (x-only): {internal_pubkey_bytes.hex()}")
     print(f"Tweak Preimage: TapTweak || {internal_pubkey_bytes.hex()} || {script_commitment.hex()}")
     print(f"Tweak Hash: {tweak_hash.hex()}")
     print(f"Tweak Integer: {tweak_int}")
-    
+
     # Step 4: Apply tweaking formula
     #Generate tweak point t * G
     t_Point: Point = tweak_int * G
@@ -240,7 +241,7 @@ def demonstrate_key_tweaking():
     # Create tweaked private key from the integer
     tweaked_private_key = PrivateKey.from_bytes(tweaked_privkey_int.to_bytes(32, 'big'))
     tweaked_public_key = tweaked_private_key.get_public_key()
-    
+
     print(f"\n=== STEP 4: Tweaking Application ===")
     print(f"Original Private Key: {internal_privkey_int}")
     print(f"Tweaked Private Key:  {tweaked_privkey_int}")
@@ -397,7 +398,7 @@ tx, signature = create_simple_taproot_transaction()
 
 ## Real Transaction Analysis
 
-Let's examine a real Taproot transaction: [`a3b4d038...7a42cb6`](https://mempool.space/testnet/tx/a3b4d0382efd189619d4f5bd598b6421e709649b87532d53aecdc76457a42cb6)
+Let's examine a real Taproot transaction: [`a3b4d038...57a42cb6`](https://mempool.space/testnet/tx/a3b4d0382efd189619d4f5bd598b6421e709649b87532d53aecdc76457a42cb6?showDetails=true)
 
 **Transaction Structure:**
 ```
@@ -586,7 +587,7 @@ Non-Cooperative Spending (Script Path):
 
 Taproot represents a paradigm shift in Bitcoin transactions through two key mathematical innovations:
 
-**Schnorr Signatures**: The linearity property enables key aggregation,single-signature output, and most importantly, key tweaking. This creates fixed 64-byte signatures that can represent any level of complexity while looking identical.
+**Schnorr Signatures**: The linearity property enables key aggregation, single-signature output, and most importantly, key tweaking. This creates fixed 64-byte signatures that can represent any level of complexity while looking identical.
 
 **Key Tweaking (Tweakable Commitment)**: The mathematical relationship `Q = P + t×G` allows keys to be deterministically modified with script commitments, creating dual spending paths while maintaining cryptographic security.
 
