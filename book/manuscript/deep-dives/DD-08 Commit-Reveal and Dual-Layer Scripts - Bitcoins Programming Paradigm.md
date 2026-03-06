@@ -21,14 +21,14 @@ Lock:   commit to a condition
 Unlock: reveal a proof satisfying it
 ```
 
-| Address Type | What is Committed | Chapter |
-|---|---|---|
-| P2PK | Raw public key | Ch 1 (Satoshi → Hal Finney) |
-| P2PKH | `HASH160(pubkey)` | Ch 2 |
-| P2SH | `HASH160(script)` | Ch 3 |
-| P2WPKH | `HASH160(pubkey)` via witness | Ch 4 |
-| P2WSH | `SHA256(script)` via witness | Ch 4 (concept), Ch 11 |
-| Taproot | `internal_key + tweak(merkle_root)` | Ch 5–8 |
+| Address Type | What is Committed                   | Chapter                     |
+|--------------|-------------------------------------|-----------------------------|
+| P2PK         | Raw public key                      | Ch 1 (Satoshi → Hal Finney) |
+| P2PKH        | `HASH160(pubkey)`                   | Ch 2                        |
+| P2SH         | `HASH160(script)`                   | Ch 3                        |
+| P2WPKH       | `HASH160(pubkey)` via witness       | Ch 4                        |
+| P2WSH        | `SHA256(script)` via witness        | Ch 4 (concept), Ch 11       |
+| Taproot      | `internal_key + tweak(merkle_root)` | Ch 5–8                      |
 
 Commitments grow more abstract across Bitcoin's history. Privacy improves. Scripts expose less and less. But the core pattern never changes:
 
@@ -270,12 +270,12 @@ witness:       <stack...> <tapscript> <control_block>
 
 Commitment: An **elliptic curve point** that encodes both a public key and a Merkle tree root. This is fundamentally different from P2SH/P2WSH's hash-based commitment:
 
-| Property | P2SH | P2WSH | Taproot |
-|---|---|---|---|
-| Commitment type | HASH160 | SHA256 | EC point (tweaked key) |
-| Commitment size | 20 bytes | 32 bytes | 32 bytes |
-| Multiple scripts? | No | No | Yes (Merkle tree) |
-| Key-path fallback? | No | No | Yes |
+| Property                   | P2SH           | P2WSH           | Taproot                          |
+|----------------------------|----------------|-----------------|----------------------------------|
+| Commitment type            | HASH160        | SHA256          | EC point (tweaked key)           |
+| Commitment size            | 20 bytes       | 32 bytes        | 32 bytes                         |
+| Multiple scripts?          | No             | No              | Yes (Merkle tree)                |
+| Key-path fallback?         | No             | No              | Yes                              |
 | Outer scriptPubKey reveals | "This is P2SH" | "This is P2WSH" | Nothing (looks like any Taproot) |
 
 The outer script **never encodes logic** — only a fingerprint of logic. But Taproot's fingerprint is richer: it commits to an entire tree of scripts while simultaneously functioning as a public key.
@@ -286,13 +286,13 @@ Taproot is unique: the **same address** can be spent via single-layer (key-path)
 
 Chapter 8's address `tb1pjfdm902y2adr08qnn4tahxjvp6x5selgmvzx63yfqk2hdey02yvqjcr29q` demonstrates this:
 
-| Spending Method | TXID | Architecture | Witness |
-|---|---|---|---|
-| Key Path | `1e518aa5...00da` | **Single-layer** | [64-byte signature] |
-| Script 0 (Hash Lock) | `1ba4835f...6845` | **Dual-layer** | [preimage, script, control_block] |
-| Script 1 (Multisig) | `1951a3be...04a1` | **Dual-layer** | [bob_sig, alice_sig, script, control_block] |
-| Script 2 (CSV) | `98361ab2...41ee` | **Dual-layer** | [bob_sig, script, control_block] |
-| Script 3 (Sig) | `1af46d4c...71b9` | **Dual-layer** | [bob_sig, script, control_block] |
+| Spending Method      | TXID              | Architecture     | Witness                                    |
+|----------------------|-------------------|------------------|--------------------------------------------|
+| Key Path             | `1e518aa5...00da` | **Single-layer** | [64-byte signature]                        |
+| Script 0 (Hash Lock) | `1ba4835f...6845` | **Dual-layer**   | [preimage, script, control_block]          |
+| Script 1 (Multisig)  | `1951a3be...04a1` | **Dual-layer**   | [bob_sig, alice_sig, script, control_block] |
+| Script 2 (CSV)       | `98361ab2...41ee` | **Dual-layer**   | [bob_sig, script, control_block]           |
+| Script 3 (Sig)       | `1af46d4c...71b9` | **Dual-layer**   | [bob_sig, script, control_block]           |
 
 **Five transactions, one address, two fundamentally different execution paths.**
 
@@ -304,13 +304,13 @@ This dual identity is Taproot's deepest design insight: the common case (key-pat
 
 Failing to distinguish commit–reveal (philosophy) from dual-layer (mechanism) leads to confusion on five specific questions:
 
-| Question | Answer (with architecture) |
-|---|---|
-| Why does P2SH's scriptPubKey have no `OP_CHECKSIG`? | Because the outer layer only verifies a hash commitment. Logic lives in the inner redeem script. |
-| Why does SegWit move data to the witness? | To make the outer commitment malleability-resistant (DD-4). The architecture stays single-layer for P2WPKH. |
-| Why must P2WSH and Taproot script-path reveal the full script? | Because the inner layer needs actual opcodes to execute. The outer layer only has a hash/point. |
-| Why must Taproot reconstruct the tweaked key? | Because Taproot's outer commitment is an EC point, not a simple hash. Verification requires elliptic curve arithmetic. |
-| Why is key-path spending "scriptless"? | Because key-path is single-layer — it never enters the inner execution layer. The script tree is invisible. |
+| Question                                                       | Answer (with architecture)                                                                                             |
+|----------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------|
+| Why does P2SH's scriptPubKey have no `OP_CHECKSIG`?            | Because the outer layer only verifies a hash commitment. Logic lives in the inner redeem script.                       |
+| Why does SegWit move data to the witness?                      | To make the outer commitment malleability-resistant (DD-4). The architecture stays single-layer for P2WPKH.            |
+| Why must P2WSH and Taproot script-path reveal the full script? | Because the inner layer needs actual opcodes to execute. The outer layer only has a hash/point.                        |
+| Why must Taproot reconstruct the tweaked key?                  | Because Taproot's outer commitment is an EC point, not a simple hash. Verification requires elliptic curve arithmetic. |
+| Why is key-path spending "scriptless"?                         | Because key-path is single-layer — it never enters the inner execution layer. The script tree is invisible.            |
 
 With the correct architecture model, every design decision clicks into place.
 

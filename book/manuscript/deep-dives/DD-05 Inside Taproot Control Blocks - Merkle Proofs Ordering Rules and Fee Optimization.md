@@ -18,12 +18,12 @@ A Control Block is **a Merkle proof that a specific script was committed to in t
 [1 byte: version + parity] [32 bytes: internal pubkey] [32 bytes × k: Merkle path]
 ```
 
-| Tree Type | Leaves | Depth (k) | Control Block Size |
-|---|---|---|---|
-| Single-leaf | 1 | 0 | 33 bytes |
-| Dual-leaf | 2 | 1 | 65 bytes |
-| Four-leaf (balanced) | 4 | 2 | 97 bytes |
-| Eight-leaf (balanced) | 8 | 3 | 129 bytes |
+| Tree Type             | Leaves | Depth (k) | Control Block Size |
+|-----------------------|--------|-----------|--------------------|
+| Single-leaf           | 1      | 0         | 33 bytes           |
+| Dual-leaf             | 2      | 1         | 65 bytes           |
+| Four-leaf (balanced)  | 4      | 2         | 97 bytes           |
+| Eight-leaf (balanced) | 8      | 3         | 129 bytes          |
 
 **Each additional tree level adds exactly 32 bytes** — one sibling hash for the Merkle path.
 
@@ -50,12 +50,12 @@ All four Control Blocks share:
 
 ### Four Control Blocks Side by Side
 
-| Field | Script 0 (Hash Lock) | Script 1 (Multisig) | Script 2 (CSV) | Script 3 (Sig) |
-|---|---|---|---|---|
-| Sibling 1 | `63cb9e47...60def` | `fe78d852...f659e` | `2faaa677...cf9df` | `593d543a...8e4b9` |
-| Sibling 1 is... | Script1 TapLeaf | Script0 TapLeaf | Script3 TapLeaf | Script2 TapLeaf |
-| Sibling 2 | `da551975...299e3` | `da551975...299e3` | `d6ac4c01...d1210` | `d6ac4c01...d1210` |
-| Sibling 2 is... | Branch1 hash | Branch1 hash | Branch0 hash | Branch0 hash |
+| Field           | Script 0 (Hash Lock) | Script 1 (Multisig) | Script 2 (CSV)     | Script 3 (Sig)     |
+|-----------------|----------------------|---------------------|--------------------|--------------------|
+| Sibling 1       |  `63cb9e47...60def`  | `fe78d852...f659e`  | `2faaa677...cf9df` | `593d543a...8e4b9` |
+| Sibling 1 is... | Script1 TapLeaf      | Script0 TapLeaf     | Script3 TapLeaf    | Script2 TapLeaf    |
+| Sibling 2       | `da551975...299e3`   | `da551975...299e3`  | `d6ac4c01...d1210` | `d6ac4c01...d1210` |
+| Sibling 2 is... | Branch1 hash         | Branch1 hash        | Branch0 hash       | Branch0 hash       |
 
 **Key observations:**
 
@@ -267,12 +267,12 @@ Same address?          False
 
 ### Summary: What Changes the Address?
 
-| Operation | Address Changes? | Reason |
-|---|---|---|
-| Swap siblings within a branch | **No** | TapBranch sorts children |
-| Swap entire branches | **No** | Top-level TapBranch also sorts |
-| Swap scripts across branches | **Yes** | Different intermediate hashes |
-| Change tree topology | **Yes** | Different computation structure |
+| Operation                     | Address Changes? | Reason                          |
+|-------------------------------|------------------|---------------------------------|
+| Swap siblings within a branch | **No**           | TapBranch sorts children        |
+| Swap entire branches          | **No**           | Top-level TapBranch also sorts  |
+| Swap scripts across branches  | **Yes**          | Different intermediate hashes   |
+| Change tree topology          | **Yes**          | Different computation structure |
 
 ## Part 5: Why Does BIP341 Sort?
 
@@ -304,21 +304,21 @@ Chapter 8 used a balanced tree where all four scripts have identical 97-byte Con
 
 **Balanced tree** `[[s0, s1], [s2, s3]]`:
 
-| Script | Depth | Control Block | Size |
-|---|---|---|---|
-| Script 0 | 2 | version + pubkey + sibling + branch | 97 bytes |
-| Script 1 | 2 | version + pubkey + sibling + branch | 97 bytes |
-| Script 2 | 2 | version + pubkey + sibling + branch | 97 bytes |
-| Script 3 | 2 | version + pubkey + sibling + branch | 97 bytes |
+| Script   | Depth | Control Block                       | Size     |
+|----------|-------|-------------------------------------|----------|
+| Script 0 | 2     | version + pubkey + sibling + branch | 97 bytes |
+| Script 1 | 2     | version + pubkey + sibling + branch | 97 bytes |
+| Script 2 | 2     | version + pubkey + sibling + branch | 97 bytes |
+| Script 3 | 2     | version + pubkey + sibling + branch | 97 bytes |
 
 **Unbalanced tree** `[s0, [s1, [s2, s3]]]`:
 
-| Script | Depth | Control Block | Size |
-|---|---|---|---|
-| Script 0 | 1 | version + pubkey + sibling | **65 bytes** |
-| Script 1 | 2 | version + pubkey + sibling + branch | 97 bytes |
-| Script 2 | 3 | version + pubkey + sibling + branch + branch | **129 bytes** |
-| Script 3 | 3 | version + pubkey + sibling + branch + branch | **129 bytes** |
+| Script   | Depth | Control Block                                | Size          |
+|----------|-------|----------------------------------------------|---------------|
+| Script 0 | 1     | version + pubkey + sibling                   | **65 bytes**  |
+| Script 1 | 2     | version + pubkey + sibling + branch          | 97 bytes      |
+| Script 2 | 3     | version + pubkey + sibling + branch + branch | **129 bytes** |
+| Script 3 | 3     | version + pubkey + sibling + branch + branch | **129 bytes** |
 
 ### Cost Calculation
 
@@ -347,15 +347,15 @@ When you spend via Script Path, the Control Block is visible on-chain. What does
 
 ### Information Disclosed
 
-| Information | Revealed? | Details |
-|---|---|---|
-| Executed script content | **Yes** | Witness includes the full script |
-| Other scripts' content | **No** | Only 32-byte hashes (computationally hiding) |
-| Internal public key | **Yes** | Bytes 1–32 of Control Block |
-| Minimum tree depth | **Yes** | `(control_block_size - 33) / 32` |
-| Upper bound on script count | **Yes** | Depth k → at most 2^k leaves |
-| Exact number of scripts | **No** | Depth 2 could be 3 or 4 leaves |
-| Tree topology | **Partially** | The Merkle path reveals the branch structure for the executed script, but not the full tree |
+| Information                   | Revealed?     | Details                                       |
+|-------------------------------|---------------|-----------------------------------------------|
+| Executed script content       | **Yes**       | Witness includes the full script              |
+| Other scripts' content        | **No**        | Only 32-byte hashes (computationally hiding)  |
+| Internal public key           | **Yes**       | Bytes 1–32 of Control Block                   |
+| Minimum tree depth            | **Yes**       | `(control_block_size - 33) / 32`              |
+| Upper bound on script count   | **Yes**       | Depth k → at most 2^k leaves                  |
+| Exact number of scripts       | **No**        | Depth 2 could be 3 or 4 leaves                |
+| Tree topology                 | **Partially** | The Merkle path reveals the branch structure for the executed script, but not the full tree |
 
 ### Concrete Example from Chapter 8
 
@@ -405,11 +405,11 @@ Every intermediate hash value is displayed, allowing you to verify the math your
 
 Use each of Chapter 8's four Script Path transactions to see how the Control Block changes while the reconstructed address stays the same:
 
-| Transaction | Script Content | TXID |
-|---|---|---|
-| Hash Lock (Script 0) | `a820936a...8851` | `1ba4835f...6845` |
-| Multisig (Script 1) | `002050be...5287` | `1951a3be...04a1` |
-| CSV Timelock (Script 2) | `52b27520...f5ac` | `98361ab2...41ee` |
+| Transaction                 | Script Content    | TXID              |
+|-----------------------------|-------------------|-------------------|
+| Hash Lock (Script 0)        | `a820936a...8851` | `1ba4835f...6845` |
+| Multisig (Script 1)         | `002050be...5287` | `1951a3be...04a1` |
+| CSV Timelock (Script 2)     | `52b27520...f5ac` | `98361ab2...41ee` |
 | Simple Signature (Script 3) | `2084b595...f5ac` | `1af46d4c...71b9` |
 
 All four reconstruct to the same address: `tb1pjfdm902y2adr08qnn4tahxjvp6x5selgmvzx63yfqk2hdey02yvqjcr29q` — proving they all originate from the same script tree commitment.
